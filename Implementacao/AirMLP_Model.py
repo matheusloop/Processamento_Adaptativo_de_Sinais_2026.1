@@ -5,27 +5,28 @@ from keras.callbacks import EarlyStopping
 from sklearn.metrics import r2_score, mean_absolute_error, root_mean_squared_error
 import random
 
-def sample_hyperparameters():
+def sample_hyperparameters(winSize_list, hiddenLayer_range, neuron_list, function_list, learning_rate_range, batch_size_list):
 
     params = {
+        'winSize': random.choice(winSize_list),
         # Número de camadas ocultas
-        'nHiddenLayers': random.randint(4, 10),
+        'hiddenLayers': random.randint(hiddenLayer_range[0], hiddenLayer_range[1]),
         # Número de neurônios por camada
-        'nNeurons': random.choice([64, 128, 256, 512]),
+        'neurons': random.choice(neuron_list),
         # Função de ativação
-        'function': random.choice(['relu', 'tanh']),
+        'function': random.choice(function_list),
         # Learning rate (log-uniform)
-        'learning_rate': 10 ** random.uniform(-5, -2),
+        'learning_rate': 10 ** random.uniform(learning_rate_range[0], learning_rate_range[1]),
         # Batch size
-        'batchSize': random.choice([64, 128, 256, 512]),
+        'batchSize': random.choice(batch_size_list),
         # Número máximo de épocas
-        'nEpochs': random.choice([100])
+        'epochs': 200
     }
 
     return params
 
 
-def createMLP_andTrain(nHiddenLayers, nNeurons, function, learning_rate, batchSize, nEpochs, X_train, y_train, X_val, y_val):
+def createMLP_andTrain(hiddenLayers, neurons, function, learning_rate, batchSize, epochs, X_train, y_train, X_val, y_val):
     
     ##################################
     # MONTANDO A REDE NEURAL ARTIFICIAL (MLP)
@@ -34,8 +35,8 @@ def createMLP_andTrain(nHiddenLayers, nNeurons, function, learning_rate, batchSi
 
     model.add(Input(shape=(X_train.shape[1],)))
     
-    for _ in range(nHiddenLayers):
-        model.add(Dense(nNeurons, activation=function))
+    for _ in range(hiddenLayers):
+        model.add(Dense(neurons, activation=function))
     
     model.add(Dense(1))
     ##################################
@@ -61,12 +62,12 @@ def createMLP_andTrain(nHiddenLayers, nNeurons, function, learning_rate, batchSi
         X_train, 
         y_train,
         validation_data=(X_val, y_val),
-        epochs=nEpochs,
+        epochs=epochs,
         batch_size=batchSize,
         callbacks=[early_stop],
         verbose=0
     )
-    nEpochs = len(history.history['loss'])
+    epochs = len(history.history['loss'])
     ##################################
 
     ##################################
@@ -78,4 +79,4 @@ def createMLP_andTrain(nHiddenLayers, nNeurons, function, learning_rate, batchSi
     mae = mean_absolute_error(y_val, y_val_pred)
     rmse = root_mean_squared_error(y_val, y_val_pred)
 
-    return {'nEpochs': nEpochs, 'r2': r2, 'mae': mae, 'rmse': rmse}
+    return {'epochs': 'epochs', 'r2': r2, 'mae': mae, 'rmse': rmse}
