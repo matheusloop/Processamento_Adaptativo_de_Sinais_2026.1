@@ -79,4 +79,4 @@ def createMLP_andTrain(hiddenLayers, neurons, function, learning_rate, batchSize
     mae = mean_absolute_error(y_val, y_val_pred)
     rmse = root_mean_squared_error(y_val, y_val_pred)
 
-    return {'epochs': 'epochs', 'r2': r2, 'mae': mae, 'rmse': rmse}
+    return {'epochs': epochs, 'r2': r2, 'mae': mae, 'rmse': rmse}
